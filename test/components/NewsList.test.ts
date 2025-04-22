@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, VueWrapper } from '@vue/test-utils'
 import { ref } from 'vue'
 import NewsList from '~/components/NewsList.vue'
 import NewsCard from '~/components/NewsCard.vue'
@@ -7,17 +7,12 @@ import AppLoader from '~/components/AppLoader.vue'
 import AppError from '~/components/AppError.vue'
 import { useNewsListStore } from '~/stores/news'
 
-// Мокаем store
+// Mock store
 vi.mock('~/stores/news', () => ({
-  useNewsListStore: vi.fn(() => ({
-    news: [],
-    loading: false,
-    error: null,
-    fetchNews: vi.fn()
-  }))
+  useNewsListStore: vi.fn()
 }))
 
-// Мокаем composables
+// Mock composables
 vi.mock('#imports', () => ({
   useAsyncData: vi.fn(() => ({
     data: ref([]),
@@ -28,7 +23,9 @@ vi.mock('#imports', () => ({
 }))
 
 describe('NewsList', () => {
-  let wrapper: any
+  let wrapper: VueWrapper
+  let store: any
+
   const mockNews = [
     {
       id: 1,
@@ -48,82 +45,96 @@ describe('NewsList', () => {
     }
   ]
 
+  const mountComponent = () => {
+    return mount(NewsList, {
+      global: {
+        components: {
+          NewsCard,
+          AppLoader,
+          AppError
+        },
+        stubs: {
+          'i': true // Stub Bootstrap icons
+        }
+      }
+    })
+  }
+
   beforeEach(() => {
-    // Сбрасываем моки перед каждым тестом
     vi.clearAllMocks()
+    
+    // Setup store mock for each test
+    store = {
+      news: [],
+      loading: false,
+      error: null,
+      fetchNews: vi.fn()
+    }
+    
+    vi.mocked(useNewsListStore).mockReturnValue(store)
   })
 
-  it('отображает загрузчик во время загрузки', () => {
-    const store = useNewsListStore()
+  it('shows loader while loading', () => {
     store.loading = true
-
-    wrapper = mount(NewsList, {
-      global: {
-        components: {
-          NewsCard,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
+    wrapper = mountComponent()
+    
     expect(wrapper.findComponent(AppLoader).exists()).toBe(true)
+    expect(wrapper.findComponent(AppLoader).props('message')).toBe('Loading news...')
   })
 
-  it('отображает ошибку при наличии ошибки', () => {
-    const store = useNewsListStore()
+  it('shows error when there is an error', () => {
     store.error = 'Test error message'
-
-    wrapper = mount(NewsList, {
-      global: {
-        components: {
-          NewsCard,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
-    expect(wrapper.findComponent(AppError).exists()).toBe(true)
-    expect(wrapper.findComponent(AppError).props('message')).toBe('Test error message')
+    wrapper = mountComponent()
+    
+    const errorComponent = wrapper.findComponent(AppError)
+    expect(errorComponent.exists()).toBe(true)
+    expect(errorComponent.props('message')).toBe('Test error message')
   })
 
-  it('отображает список новостей', async () => {
-    const store = useNewsListStore()
+  it('displays news list', () => {
     store.news = mockNews
-    store.loading = false
-
-    wrapper = mount(NewsList, {
-      global: {
-        components: {
-          NewsCard,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
+    wrapper = mountComponent()
+    
     const newsCards = wrapper.findAllComponents(NewsCard)
     expect(newsCards).toHaveLength(2)
     expect(newsCards[0].props('news')).toEqual(mockNews[0])
     expect(newsCards[1].props('news')).toEqual(mockNews[1])
   })
 
-  it('отображает сообщение при отсутствии новостей', async () => {
-    const store = useNewsListStore()
+  it('shows empty state when no news found', () => {
     store.news = []
-    store.loading = false
+    wrapper = mountComponent()
+    
+    const emptyState = wrapper.find('.empty-state')
+    expect(emptyState.exists()).toBe(true)
+    expect(emptyState.text()).toContain('No results found for your search')
+  })
 
-    wrapper = mount(NewsList, {
-      global: {
-        components: {
-          NewsCard,
-          AppLoader,
-          AppError
-        }
-      }
-    })
+  it('filters news based on search query', async () => {
+    store.news = mockNews
+    wrapper = mountComponent()
+    
+    const searchInput = wrapper.find('input[type="text"]')
+    await searchInput.setValue('Test News 1')
+    
+    const newsCards = wrapper.findAllComponents(NewsCard)
+    expect(newsCards).toHaveLength(1)
+    expect(newsCards[0].props('news')).toEqual(mockNews[0])
+  })
 
-    expect(wrapper.find('.text-center').text()).toContain('Новости не найдены')
+  it('clears search when clear button is clicked', async () => {
+    store.news = mockNews
+    wrapper = mountComponent()
+    
+    const searchInput = wrapper.find('input[type="text"]')
+    await searchInput.setValue('Test')
+    
+    const clearButton = wrapper.find('button')
+    await clearButton.trigger('click')
+    
+    const inputElement = searchInput.element as HTMLInputElement
+    expect(inputElement.value).toBe('')
+    const newsCards = wrapper.findAllComponents(NewsCard)
+    expect(newsCards).toHaveLength(2)
   })
 }) 

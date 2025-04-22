@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
-import { ref } from 'vue'
+import { mount, flushPromises, VueWrapper } from '@vue/test-utils'
+import { ref, nextTick } from 'vue'
 import NewsComments from '~/components/NewsComments.vue'
 import CommentForm from '~/components/CommentForm.vue'
 import CommentList from '~/components/CommentList.vue'
@@ -8,41 +8,25 @@ import AppLoader from '~/components/AppLoader.vue'
 import AppError from '~/components/AppError.vue'
 import { useCommentsStore } from '~/stores/comments'
 
-// Мокаем store
+// Mock store
 vi.mock('~/stores/comments', () => ({
-  useCommentsStore: vi.fn(() => ({
-    comments: [],
-    fetchComments: vi.fn(),
-    receiveComment: vi.fn(),
-    connectToWebSocket: vi.fn(),
-    disconnectWebSocket: vi.fn()
-  }))
+  useCommentsStore: vi.fn()
 }))
 
-// Мокаем composables
+// Mock composables
 vi.mock('#imports', () => ({
   useAsyncData: vi.fn(() => ({
     data: ref([]),
     pending: ref(false),
     error: ref(null),
-    refresh: vi.fn(),
-    execute: vi.fn(),
-    clear: vi.fn(),
-    status: ref('idle')
-  })),
-  useFetch: vi.fn(() => ({
-    data: ref(null),
-    error: ref(null),
-    pending: ref(false),
-    refresh: vi.fn(),
-    execute: vi.fn(),
-    clear: vi.fn(),
-    status: ref('idle')
+    refresh: vi.fn()
   }))
 }))
 
 describe('NewsComments', () => {
-  let wrapper: any
+  let wrapper: VueWrapper
+  let store: any
+
   const mockComments = [
     {
       id: 1,
@@ -60,173 +44,112 @@ describe('NewsComments', () => {
     }
   ]
 
+  const mountComponent = () => {
+    return mount(NewsComments, {
+      props: {
+        newsId: 1
+      },
+      global: {
+        components: {
+          CommentForm,
+          CommentList,
+          AppLoader,
+          AppError
+        }
+      }
+    })
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
+    
+    // Setup store mock for each test
+    store = {
+      comments: [],
+      fetchComments: vi.fn().mockResolvedValue([]),
+      addComment: vi.fn().mockResolvedValue({}),
+      connectToWebSocket: vi.fn(),
+      disconnectWebSocket: vi.fn()
+    }
+    
+    vi.mocked(useCommentsStore).mockReturnValue(store)
   })
 
-  it('отображает форму комментария', async () => {
-    wrapper = mount(NewsComments, {
-      props: {
-        newsId: 1
-      },
-      global: {
-        components: {
-          CommentForm,
-          CommentList,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
+  it('displays comments section title', async () => {
+    wrapper = mountComponent()
     await flushPromises()
+    
+    expect(wrapper.find('h3').text()).toBe('Comments')
+  })
+
+  it('displays comment form and list', async () => {
+    store.fetchComments.mockResolvedValue(mockComments)
+    wrapper = mountComponent()
+    await flushPromises()
+    
     expect(wrapper.findComponent(CommentForm).exists()).toBe(true)
-  })
-
-  it('отображает загрузчик во время загрузки', async () => {
-    vi.mocked(useAsyncData).mockReturnValueOnce(Promise.resolve({
-      data: ref([]),
-      pending: ref(true),
-      error: ref(null),
-      refresh: vi.fn(),
-      execute: vi.fn(),
-      clear: vi.fn(),
-      status: ref('pending')
-    }))
-
-    wrapper = mount(NewsComments, {
-      props: {
-        newsId: 1
-      },
-      global: {
-        components: {
-          CommentForm,
-          CommentList,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
-    await flushPromises()
-    expect(wrapper.findComponent(AppLoader).exists()).toBe(true)
-  })
-
-  it('отображает ошибку при наличии ошибки', async () => {
-    const errorMessage = 'Test error message'
-    vi.mocked(useAsyncData).mockReturnValueOnce(Promise.resolve({
-      data: ref([]),
-      pending: ref(false),
-      error: ref({
-        message: errorMessage,
-        statusCode: 500,
-        fatal: false,
-        unhandled: false,
-        name: 'NuxtError',
-        toJSON: () => ({ message: errorMessage, statusCode: 500 })
-      }),
-      refresh: vi.fn(),
-      execute: vi.fn(),
-      clear: vi.fn(),
-      status: ref('error')
-    }))
-
-    wrapper = mount(NewsComments, {
-      props: {
-        newsId: 1
-      },
-      global: {
-        components: {
-          CommentForm,
-          CommentList,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
-    await flushPromises()
-    expect(wrapper.findComponent(AppError).exists()).toBe(true)
-    expect(wrapper.findComponent(AppError).props('message')).toBe(errorMessage)
-  })
-
-  it('отображает список комментариев', async () => {
-    const store = useCommentsStore()
-    store.comments = mockComments
-
-    vi.mocked(useAsyncData).mockReturnValueOnce(Promise.resolve({
-      data: ref(mockComments),
-      pending: ref(false),
-      error: ref(null),
-      refresh: vi.fn(),
-      execute: vi.fn(),
-      clear: vi.fn(),
-      status: ref('success')
-    }))
-
-    wrapper = mount(NewsComments, {
-      props: {
-        newsId: 1
-      },
-      global: {
-        components: {
-          CommentForm,
-          CommentList,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
-    await flushPromises()
     expect(wrapper.findComponent(CommentList).exists()).toBe(true)
     expect(wrapper.findComponent(CommentList).props('comments')).toEqual(mockComments)
   })
 
-  it('отправляет новый комментарий', async () => {
-    const store = useCommentsStore()
+  it('displays loader during loading', async () => {
+    // Create a Promise that never resolves
+    const loadingPromise = new Promise(() => {})
+    store.fetchComments.mockReturnValue(loadingPromise)
+    
+    wrapper = mountComponent()
+    await nextTick() // Wait for Vue to update the DOM
+    
+    expect(wrapper.findComponent(AppLoader).exists()).toBe(true)
+    expect(wrapper.findComponent(AppLoader).props('message')).toBe('Loading comments...')
+  })
+
+  it('displays error when loading fails', async () => {
+    const errorMessage = 'Test error message'
+    store.fetchComments.mockRejectedValue(new Error(errorMessage))
+    
+    wrapper = mountComponent()
+    await flushPromises()
+    
+    const errorComponent = wrapper.findComponent(AppError)
+    expect(errorComponent.exists()).toBe(true)
+    expect(errorComponent.props('message')).toBe(errorMessage)
+  })
+
+  it('handles new comment submission', async () => {
     const newComment = {
       author: 'New Author',
       content: 'New Content'
     }
-
-    vi.mocked(useAsyncData).mockReturnValueOnce(Promise.resolve({
-      data: ref([]),
-      pending: ref(false),
-      error: ref(null),
-      refresh: vi.fn(),
-      execute: vi.fn(),
-      clear: vi.fn(),
-      status: ref('success')
-    }))
-
-    vi.mocked(useFetch).mockReturnValueOnce(Promise.resolve({
-      data: ref({ id: 1, ...newComment, date: new Date().toISOString() }),
-      error: ref(null),
-      pending: ref(false),
-      refresh: vi.fn(),
-      execute: vi.fn(),
-      clear: vi.fn(),
-      status: ref('success')
-    }))
-
-    wrapper = mount(NewsComments, {
-      props: {
-        newsId: 1
-      },
-      global: {
-        components: {
-          CommentForm,
-          CommentList,
-          AppLoader,
-          AppError
-        }
-      }
-    })
-
+    
+    wrapper = mountComponent()
     await flushPromises()
+    
     await wrapper.findComponent(CommentForm).vm.$emit('submit', newComment)
+    await flushPromises()
+    
+    expect(store.addComment).toHaveBeenCalledWith(expect.objectContaining({
+      ...newComment,
+      newsId: 1
+    }))
+    expect(store.fetchComments).toHaveBeenCalledWith(1)
+  })
 
-    expect(store.receiveComment).toHaveBeenCalled()
+  it('handles comment submission error', async () => {
+    const errorMessage = 'Failed to add comment'
+    store.addComment.mockRejectedValue(new Error(errorMessage))
+    
+    wrapper = mountComponent()
+    await flushPromises()
+    
+    await wrapper.findComponent(CommentForm).vm.$emit('submit', {
+      author: 'New Author',
+      content: 'New Content'
+    })
+    await flushPromises()
+    
+    const errorComponent = wrapper.findComponent(AppError)
+    expect(errorComponent.exists()).toBe(true)
+    expect(errorComponent.props('message')).toBe(errorMessage)
   })
 }) 

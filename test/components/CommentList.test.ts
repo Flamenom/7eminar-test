@@ -21,7 +21,7 @@ describe('CommentList', () => {
     }
   ]
 
-  it('отображает список комментариев', () => {
+  it('displays list of comments', () => {
     const wrapper = mount(CommentList, {
       props: {
         comments: mockComments
@@ -42,7 +42,7 @@ describe('CommentList', () => {
     })
   })
 
-  it('отображает сообщение, когда комментариев нет', () => {
+  it('displays message when there are no comments', () => {
     const wrapper = mount(CommentList, {
       props: {
         comments: []
@@ -55,6 +55,6 @@ describe('CommentList', () => {
     })
 
     expect(wrapper.findComponent(CommentItem).exists()).toBe(false)
-    expect(wrapper.text()).toContain('Пока нет комментариев. Будьте первым!')
+    expect(wrapper.text()).toContain('No comments yet. Be the first to comment!')
   })
 }) 

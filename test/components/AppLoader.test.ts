@@ -5,7 +5,8 @@ import AppLoader from '~/components/AppLoader.vue'
 describe('AppLoader', () => {
   it('renders with default message', () => {
     const wrapper = mount(AppLoader)
-    expect(wrapper.text()).toContain('Загрузка...')
+    expect(wrapper.text()).toContain('Loading...')
+    expect(wrapper.find('.visually-hidden').text()).toBe('Loading...')
   })
 
   it('renders with custom message', () => {
@@ -15,10 +16,13 @@ describe('AppLoader', () => {
       }
     })
     expect(wrapper.text()).toContain('Custom loading message')
+    expect(wrapper.find('.visually-hidden').text()).toBe('Loading...')
   })
 
-  it('contains spinner element', () => {
+  it('has correct spinner class', () => {
     const wrapper = mount(AppLoader)
-    expect(wrapper.find('.spinner-border').exists()).toBe(true)
+    const spinner = wrapper.find('.spinner-border')
+    expect(spinner.exists()).toBe(true)
+    expect(spinner.classes()).toContain('text-primary')
   })
 }) 

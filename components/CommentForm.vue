@@ -27,7 +27,7 @@
         <button 
           type="submit" 
           class="btn btn-primary"
-          :disabled="disabled"
+          :disabled="disabled || isSubmitting"
         >
           <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
           {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -62,6 +62,7 @@ const submitComment = async () => {
     emit('submit', { ...newComment.value })
     newComment.value.author = ''
     newComment.value.content = ''
+    await new Promise(resolve => setTimeout(resolve, 100))
   } catch (error) {
     console.error('Error submitting comment:', error)
   } finally {

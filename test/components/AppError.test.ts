@@ -1,6 +1,13 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import AppError from '~/components/AppError.vue'
+
+// Мокаем Bootstrap иконки
+vi.mock('bootstrap-icons', () => ({
+  'bi-exclamation-circle': {
+    template: '<i class="bi bi-exclamation-circle"></i>'
+  }
+}))
 
 describe('AppError', () => {
   it('renders with default title and custom message', () => {
@@ -9,7 +16,7 @@ describe('AppError', () => {
         message: 'Test error message'
       }
     })
-    expect(wrapper.text()).toContain('Произошла ошибка')
+    expect(wrapper.text()).toContain('An error occurred')
     expect(wrapper.text()).toContain('Test error message')
   })
 
@@ -45,5 +52,16 @@ describe('AppError', () => {
     })
     expect(wrapper.find('.custom-button').exists()).toBe(true)
     expect(wrapper.find('.btn-primary').exists()).toBe(false)
+  })
+
+  it('applies correct styles', () => {
+    const wrapper = mount(AppError, {
+      props: {
+        message: 'Test error message'
+      }
+    })
+    const errorState = wrapper.find('.error-state')
+    expect(errorState.exists()).toBe(true)
+    expect(errorState.classes()).toContain('error-state')
   })
 }) 

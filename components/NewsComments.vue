@@ -6,7 +6,7 @@
     
     <AppLoader v-if="pending" message="Loading comments..." />
     
-    <AppError v-else-if="error" :error="error" />
+    <AppError v-else-if="error" :message="error.message" />
     
     <CommentList v-else :comments="comments" />
   </div>
@@ -41,6 +41,7 @@ const error = ref<Error | null>(null)
 const loadComments = async () => {
   try {
     pending.value = true
+    error.value = null
     const result = await store.fetchComments(props.newsId)
     console.log('Loaded comments:', result) // Отладочная информация
     comments.value = result
@@ -59,6 +60,7 @@ onMounted(() => {
 // Обработка отправки нового комментария
 const handleSubmit = async (comment: Omit<Comment, 'id' | 'date'>) => {
   try {
+    error.value = null
     await store.addComment({
       ...comment,
       newsId: props.newsId,
