@@ -5,26 +5,20 @@
         <h6 class="card-subtitle mb-2">{{ comment.author }}</h6>
         <small class="text-muted">{{ formatDate(comment.date) }}</small>
       </div>
-      <p class="card-text">{{ comment.text }}</p>
+      <p class="card-text">{{ comment.content }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-interface Comment {
-  id: number
-  newsId: number
-  author: string
-  text: string
-  date: string
-}
+import type { Comment } from '~/stores/comments'
 
 defineProps<{
   comment: Comment
 }>()
 
 const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('ru-RU', {
+  return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

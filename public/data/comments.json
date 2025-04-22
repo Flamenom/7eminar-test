@@ -3,30 +3,114 @@
     {
       "id": 1,
       "newsId": 1,
-      "author": "John Doe",
-      "text": "Отличные новости! Nuxt 3 действительно стал намного быстрее.",
+      "author": "John Smith",
+      "content": "Great news! Very informative.",
       "date": "2024-03-20T10:30:00Z"
     },
     {
       "id": 2,
       "newsId": 1,
-      "author": "Jane Smith",
-      "text": "Очень рад видеть улучшения в TypeScript поддержке!",
+      "author": "Mary Johnson",
+      "content": "I agree with the previous comment. Would like to see more such materials.",
       "date": "2024-03-20T11:15:00Z"
     },
     {
       "id": 3,
       "newsId": 2,
-      "text": "Vue.js продолжает удивлять своими улучшениями!",
-      "author": "Mike Johnson",
-      "date": "2024-03-19T09:45:00Z"
+      "author": "Alex Brown",
+      "content": "Interesting perspective, but I have some questions...",
+      "date": "2024-03-19T15:45:00Z"
     },
     {
       "id": 4,
       "newsId": 3,
-      "author": "Sarah Wilson",
-      "text": "Pinia 2.0 выглядит многообещающе. Жду возможности попробовать новые функции!",
-      "date": "2024-03-18T14:20:00Z"
+      "author": "Test User",
+      "content": "Test comment",
+      "date": "2025-04-18T15:35:14.742Z"
+    },
+    {
+      "id": 5,
+      "newsId": 3,
+      "author": "Test User 2",
+      "content": "Test comment 2",
+      "date": "2025-04-18T15:41:08.026Z"
+    },
+    {
+      "id": 6,
+      "newsId": 3,
+      "author": "Test User 3",
+      "content": "Test comment 3",
+      "date": "2025-04-18T15:43:37.881Z"
+    },
+    {
+      "id": 7,
+      "newsId": 1,
+      "author": "Test User 4",
+      "content": "Test comment 4",
+      "date": "2025-04-18T15:44:18.447Z"
+    },
+    {
+      "id": 8,
+      "newsId": 2,
+      "author": "Test User 5",
+      "content": "Test comment 5",
+      "date": "2025-04-18T15:47:44.829Z"
+    },
+    {
+      "id": 9,
+      "newsId": 1,
+      "author": "Test User 6",
+      "content": "Test comment 6",
+      "date": "2025-04-18T15:47:59.659Z"
+    },
+    {
+      "id": 10,
+      "newsId": 2,
+      "author": "Test User 7",
+      "content": "Test comment 7",
+      "date": "2025-04-18T16:23:57.050Z"
+    },
+    {
+      "id": 11,
+      "newsId": 2,
+      "author": "s",
+      "content": "s",
+      "date": "2025-04-22T12:16:34.708Z"
+    },
+    {
+      "id": 12,
+      "newsId": 1,
+      "author": "ыы",
+      "content": "ыы",
+      "date": "2025-04-22T12:21:35.683Z"
+    },
+    {
+      "id": 13,
+      "newsId": 1,
+      "author": "еуые",
+      "content": "1234",
+      "date": "2025-04-22T12:25:20.340Z"
+    },
+    {
+      "id": 14,
+      "newsId": 1,
+      "author": "12345",
+      "content": "цыы",
+      "date": "2025-04-22T12:28:57.104Z"
+    },
+    {
+      "id": 15,
+      "newsId": 1,
+      "author": "12",
+      "content": "11",
+      "date": "2025-04-22T12:30:05.569Z"
+    },
+    {
+      "id": 16,
+      "newsId": 1,
+      "author": "тест комент",
+      "content": "текст комента",
+      "date": "2025-04-22T12:35:14.931Z"
     }
   ]
-} 
+}

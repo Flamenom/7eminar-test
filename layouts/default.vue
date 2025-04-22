@@ -1,27 +1,23 @@
 <template>
   <div>
-    <!-- Навигация -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
       <div class="container">
         <NuxtLink class="navbar-brand" to="/">
-          Новостное приложение
+          News App
         </NuxtLink>
         <button
           class="navbar-toggler"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
+          @click="toggleMenu"
           aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" :class="{ show: isMenuOpen }" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
               <NuxtLink class="nav-link" to="/" active-class="active">
-                Главная
+                Home
               </NuxtLink>
             </li>
           </ul>
@@ -29,16 +25,14 @@
       </div>
     </nav>
 
-    <!-- Основной контент -->
     <main>
       <slot />
     </main>
 
-    <!-- Футер -->
     <footer class="bg-light py-4 mt-4">
       <div class="container">
         <div class="text-center text-muted">
-          © {{ new Date().getFullYear() }} Новостное приложение
+          © {{ new Date().getFullYear() }} News App
         </div>
       </div>
     </footer>
@@ -46,11 +40,13 @@
 </template>
 
 <script setup lang="ts">
-// Инициализация Bootstrap JavaScript
-onMounted(() => {
-  // В реальном приложении здесь можно добавить инициализацию
-  // компонентов Bootstrap, требующих JavaScript
-})
+import { ref } from 'vue'
+
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <style>

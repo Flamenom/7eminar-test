@@ -3,10 +3,10 @@ import { defineStore } from 'pinia'
 interface NewsItem {
   id: number
   title: string
+  description: string
+  image: string
   date: string
-  shortDescription: string
-  fullDescription: string
-  author: string
+  content: string
 }
 
 interface NewsState {
@@ -15,7 +15,7 @@ interface NewsState {
   error: string | null
 }
 
-export const useNewsStore = defineStore('news', {
+export const useNewsListStore = defineStore('newsList', {
   state: (): NewsState => ({
     news: [],
     loading: false,
@@ -30,8 +30,7 @@ export const useNewsStore = defineStore('news', {
       const searchQuery = query.toLowerCase()
       return state.news.filter(item => 
         item.title.toLowerCase().includes(searchQuery) ||
-        item.shortDescription.toLowerCase().includes(searchQuery) ||
-        item.fullDescription.toLowerCase().includes(searchQuery)
+        item.description.toLowerCase().includes(searchQuery)
       )
     }
   },
@@ -41,11 +40,15 @@ export const useNewsStore = defineStore('news', {
       this.loading = true
       this.error = null
       try {
-        const response = await fetch('/data/news.json')
-        const data = await response.json()
-        this.news = data.news
+        const data = await $fetch('/api/news')
+        
+        if (!data || !Array.isArray(data)) {
+          throw new Error('Неверный формат данных')
+        }
+        
+        this.news = data
       } catch (error) {
-        this.error = 'Ошибка при загрузке новостей'
+        this.error = error instanceof Error ? error.message : 'Ошибка при загрузке новостей'
         console.error('Error fetching news:', error)
       } finally {
         this.loading = false

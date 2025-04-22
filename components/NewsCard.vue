@@ -1,15 +1,19 @@
 <template>
-  <div class="card h-100">
+  <div class="card h-100 shadow-sm news-card">
     <img :src="news.image" class="card-img-top" :alt="news.title">
-    <div class="card-body">
-      <h5 class="card-title">{{ news.title }}</h5>
-      <p class="card-text">{{ news.description }}</p>
-      <NuxtLink :to="`/news/${news.id}`" class="btn btn-primary">
-        Читать далее
-      </NuxtLink>
-    </div>
-    <div class="card-footer text-muted">
-      {{ formatDate(news.date) }}
+    <div class="card-body d-flex flex-column">
+      <h5 class="card-title text-truncate-2">{{ news.title }}</h5>
+      <p class="card-text text-truncate-3 text-muted">{{ news.description }}</p>
+      <div class="mt-auto d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          <i class="bi bi-calendar me-1"></i>
+          {{ formatDate(news.date) }}
+        </small>
+        <NuxtLink :to="`/news/${news.id}`" class="btn btn-primary btn-sm">
+          Read more
+          <i class="bi bi-arrow-right ms-1"></i>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -27,8 +31,8 @@ const props = defineProps<{
   news: News
 }>()
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('ru-RU', {
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -37,11 +41,11 @@ const formatDate = (dateString: string) => {
 </script>
 
 <style scoped>
-.card {
+.news-card {
   transition: transform 0.2s ease-in-out;
 }
 
-.card:hover {
+.news-card:hover {
   transform: translateY(-5px);
 }
 
@@ -50,12 +54,19 @@ const formatDate = (dateString: string) => {
   object-fit: cover;
 }
 
-.card-title {
-  font-size: 1.25rem;
-  margin-bottom: 0.75rem;
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 3rem;
 }
 
-.card-text {
-  color: #6c757d;
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 4.5rem;
 }
 </style> 

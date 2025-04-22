@@ -2,27 +2,27 @@
   "news": [
     {
       "id": 1,
-      "title": "Новый релиз Nuxt 3",
+      "title": "First News",
+      "description": "Brief description of the first news",
+      "image": "https://picsum.photos/800/400?random=1",
       "date": "2024-03-20",
-      "shortDescription": "Выпущена новая версия фреймворка Nuxt 3 с улучшенной производительностью",
-      "fullDescription": "Nuxt 3 получил значительные улучшения в производительности и новые функции. Основные изменения включают оптимизацию рендеринга, улучшенную поддержку TypeScript и новые возможности для разработчиков.",
-      "author": "Nuxt Team"
+      "content": "<p>Full text of the first news. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>"
     },
     {
       "id": 2,
-      "title": "Vue.js 3.5",
+      "title": "Second News",
+      "description": "Brief description of the second news",
+      "image": "https://picsum.photos/800/400?random=2",
       "date": "2024-03-19",
-      "shortDescription": "Анонсирован релиз Vue.js 3.5 с новыми возможностями",
-      "fullDescription": "Vue.js 3.5 приносит множество улучшений, включая оптимизированный компилятор, улучшенную реактивность и новые возможности для разработки компонентов.",
-      "author": "Vue.js Team"
+      "content": "<p>Full text of the second news. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>"
     },
     {
       "id": 3,
-      "title": "Pinia 2.0",
+      "title": "Third News",
+      "description": "Brief description of the third news",
+      "image": "https://picsum.photos/800/400?random=3",
       "date": "2024-03-18",
-      "shortDescription": "Выпущена новая версия менеджера состояний Pinia",
-      "fullDescription": "Pinia 2.0 предлагает улучшенную типизацию, новые возможности для управления состоянием и оптимизированную производительность.",
-      "author": "Pinia Team"
+      "content": "<p>Full text of the third news. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>"
     }
   ]
 } 
