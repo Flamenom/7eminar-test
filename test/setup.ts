@@ -1,10 +1,9 @@
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { config } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
+import { vi } from 'vitest'
 
-// Глобальные настройки для Vue Test Utils
 config.global.mocks = {
-  // Добавляем моки для Nuxt composables
   useRoute: () => ({
     params: {},
     query: {},
@@ -13,7 +12,6 @@ config.global.mocks = {
     push: () => {},
     replace: () => {},
   }),
-  // Добавляем мок для useFetch
   useFetch: () => ({
     data: ref(null),
     pending: ref(false),
@@ -22,17 +20,14 @@ config.global.mocks = {
   }),
 }
 
-// Настройка Pinia для тестов
 beforeAll(() => {
   setActivePinia(createPinia())
 })
 
-// Очистка после каждого теста
 afterEach(() => {
-  // Очищаем моки и состояние Pinia
+  vi.clearAllMocks()
 })
 
-// Очистка после всех тестов
 afterAll(() => {
-  // Очищаем все, что нужно после завершения всех тестов
+  vi.resetModules()
 }) 

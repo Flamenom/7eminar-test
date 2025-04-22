@@ -3,11 +3,9 @@ import { setActivePinia, createPinia } from 'pinia'
 import { ref } from 'vue'
 import { useNewsListStore } from '~/stores/news'
 
-// Мокаем глобальный $fetch
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
-// Мокаем console.error чтобы не засорять вывод тестов
 const mockConsoleError = vi.fn()
 vi.stubGlobal('console', {
   error: mockConsoleError,
@@ -16,7 +14,6 @@ vi.stubGlobal('console', {
   info: vi.fn()
 })
 
-// Мокаем useFetch
 vi.mock('#app', () => ({
   useFetch: vi.fn((url, options) => {
     const data = ref(null)
@@ -38,7 +35,6 @@ vi.mock('#app', () => ({
 describe('News Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    // Очищаем моки перед каждым тестом
     vi.clearAllMocks()
   })
 
@@ -113,7 +109,6 @@ describe('News Store', () => {
       { id: 2, title: 'News 2', description: 'Description 2', image: 'test2.jpg', date, content: 'Content 2' }
     ]
 
-    // Мокаем успешный ответ
     mockFetch.mockResolvedValueOnce(mockNews)
 
     await store.fetchNews()
@@ -129,13 +124,10 @@ describe('News Store', () => {
     const errorMessage = 'Failed to fetch news'
     const error = new Error(errorMessage)
 
-    // Мокаем ошибку
     mockFetch.mockRejectedValueOnce(error)
 
-    // Запускаем fetchNews
     await store.fetchNews()
 
-    // Проверяем состояние после ошибки
     expect(store.loading).toBe(false)
     expect(store.error).toBe(errorMessage)
     expect(store.news).toEqual([])
@@ -146,7 +138,6 @@ describe('News Store', () => {
   it('handles invalid data format', async () => {
     const store = useNewsListStore()
 
-    // Мокаем неверный формат данных
     mockFetch.mockResolvedValueOnce(null)
 
     await store.fetchNews()
@@ -154,6 +145,37 @@ describe('News Store', () => {
     expect(store.loading).toBe(false)
     expect(store.error).toBe('Неверный формат данных')
     expect(store.news).toEqual([])
+    expect(mockFetch).toHaveBeenCalledWith('/api/news')
+  })
+
+  it('handles empty response', async () => {
+    const store = useNewsListStore()
+
+    mockFetch.mockResolvedValueOnce([])
+
+    await store.fetchNews()
+
+    expect(store.loading).toBe(false)
+    expect(store.error).toBeNull()
+    expect(store.news).toEqual([])
+    expect(mockFetch).toHaveBeenCalledWith('/api/news')
+  })
+
+  it('handles malformed news items', async () => {
+    const store = useNewsListStore()
+    const date = new Date().toISOString()
+    const malformedNews = [
+      { id: 1, title: 'News 1' },
+      { id: 2, title: 'News 2', description: 'Description 2', image: 'test2.jpg', date, content: 'Content 2' }
+    ]
+
+    mockFetch.mockResolvedValueOnce(malformedNews)
+
+    await store.fetchNews()
+
+    expect(store.loading).toBe(false)
+    expect(store.error).toBeNull()
+    expect(store.news).toEqual(malformedNews)
     expect(mockFetch).toHaveBeenCalledWith('/api/news')
   })
 }) 

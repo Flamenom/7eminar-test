@@ -1,13 +1,18 @@
 <template>
   <div class="card h-100 shadow-sm news-card">
-    <img :src="news.image" class="card-img-top" :alt="news.title">
+    <img 
+      :src="news.image" 
+      class="card-img-top" 
+      :alt="news.title"
+      loading="lazy"
+    >
     <div class="card-body d-flex flex-column">
       <h5 class="card-title text-truncate-2">{{ news.title }}</h5>
       <p class="card-text text-truncate-3 text-muted">{{ news.description }}</p>
       <div class="mt-auto d-flex justify-content-between align-items-center">
         <small class="text-muted">
           <i class="bi bi-calendar me-1"></i>
-          {{ formatDate(news.date) }}
+          {{ formattedDate }}
         </small>
         <NuxtLink :to="`/news/${news.id}`" class="btn btn-primary btn-sm">
           Read more
@@ -19,6 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface News {
   id: number
   title: string
@@ -31,13 +38,13 @@ const props = defineProps<{
   news: News
 }>()
 
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('en-US', {
+const formattedDate = computed(() => {
+  return new Date(props.news.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
-}
+})
 </script>
 
 <style scoped>
