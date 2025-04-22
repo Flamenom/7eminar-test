@@ -1,81 +1,81 @@
-# Новостное приложение на Nuxt 3
+# News Application on Nuxt 3
 
-Веб-приложение для отображения новостей и комментариев с поддержкой SSR, построенное на Nuxt 3.
+A web application for displaying news and comments with SSR support, built on Nuxt 3.
 
-## Технологии
+## Technologies
 
 - Nuxt 3
 - Vue 3
-- Pinia (управление состоянием)
-- Bootstrap 5 (UI компоненты)
+- Pinia (state management)
+- Bootstrap 5 (UI components)
 - TypeScript
 
-## Функциональность
+## Features
 
-- Отображение списка новостей
-- Поиск по новостям
-- Детальная страница новости
-- Система комментариев
+- News list display
+- News search
+- News detail page
+- Comment system
 - SSR (Server Side Rendering)
-- Адаптивный дизайн
+- Responsive design
 
-## Установка
+## Installation
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd news-app
 ```
 
-2. Установите зависимости:
+2. Install dependencies:
 ```bash
 pnpm install
 ```
 
-3. Создайте файл `.env` в корне проекта (если необходимо):
+3. Create a `.env` file in the project root (if needed):
 ```env
 NUXT_PUBLIC_API_BASE=/data
 ```
 
-## Запуск
+## Running the Project
 
-### Режим разработки
+### Development Mode
 ```bash
 pnpm dev
 ```
 
-### Сборка для продакшена
+### Production Build
 ```bash
 pnpm build
 ```
 
-### Запуск продакшен версии
+### Running Production Version
 ```bash
 pnpm start
 ```
 
-## Структура проекта
+## Project Structure
 
 ```
 project/
-├── components/     # Vue компоненты
-├── pages/         # Страницы приложения
-├── composables/   # Композабельные функции
+├── components/     # Vue components
+├── pages/         # Application pages
+├── composables/   # Composable functions
 ├── middleware/    # Middleware
-├── plugins/       # Плагины
-├── stores/        # Pinia хранилища
-├── public/        # Статические файлы
-│   └── data/      # JSON данные
-└── tests/         # Тесты
+├── plugins/       # Plugins
+├── stores/        # Pinia stores
+├── public/        # Static files
+│   └── data/      # JSON data
+└── tests/         # Tests
 ```
 
-## Тестирование
+## Testing
 
 ```bash
-# Запуск тестов
+# Run tests
 pnpm test
 ```
 
-## Лицензия
+## License
 
 MIT 
